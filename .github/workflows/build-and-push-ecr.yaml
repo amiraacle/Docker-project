@@ -31,4 +31,4 @@ jobs:
         run: docker tag excercise-app $ECR_REGISTRY_URL/excercise-app
 
       - name: Push Docker image to ECR
-        run: docker push $ECR_REGISTRY_URL/excercise-app:latest
+        run: docker push $ECR_REGISTRY_URL/excercise-app
