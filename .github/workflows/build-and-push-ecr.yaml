@@ -22,13 +22,13 @@ jobs:
         run: |
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY_URL/project
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY_URL/docker-project
       
       - name: Build Docker image
-        run: docker build -t project .
+        run: docker build -t docker-project .
 
       - name: Tag Docker image
-        run: docker tag project $ECR_REGISTRY_URL/project:0.0.2
+        run: docker tag docker-project $ECR_REGISTRY_URL/docker-project:0.0.2
 
       - name: Push Docker image to ECR
-        run: docker push $ECR_REGISTRY_URL/project:0.0.2
+        run: docker push $ECR_REGISTRY_URL/docker-project:0.0.2
