@@ -40,9 +40,21 @@ jobs:
     name: Notify Slack
     needs: [build_and_push]
     runs-on: ubuntu-latest
-    if: ${{ needs.build_and_push.result != 'success' }}
+    if: ${{ always() }}
     steps:
+      - name: Notify to Slack
+        if: ${{ needs.build_and_push.result == 'success' }}
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          status: ${{ job.status }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          slack_channel: '#your_channel_name'
+          slack_username: 'GitHub Actions'
+          slack_icon_emoji: ':github:'
+          slack_title: 'Workflow Build Notification'
+          slack_text: 'Workflow *Build and Push Docker Image* has completed successfully.'
       - name: Notify failure to Slack
+        if: ${{ needs.build_and_push.result != 'success' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
