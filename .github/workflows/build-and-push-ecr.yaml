@@ -36,26 +36,20 @@ jobs:
       - name: Push Docker image to ECR
         run: docker push $ECR_REGISTRY_URL/docker-project:0.0.2
 
-  notify:
+  notify_slack:
     name: Notify Slack
     needs: [build_and_push]
     runs-on: ubuntu-latest
-    if: ${{ always() }}
     steps:
-      - name: Notify to Slack
-        if: ${{ needs.build_and_push.result == 'success' }}
+      - name: Send Slack notification
+        if: always()
         uses: rtCamp/action-slack-notify@v2
         with:
-          status: ${{ job.status }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          slack_channel: '#your_channel_name'
-          slack_username: 'GitHub Actions'
-          slack_icon_emoji: ':github:'
-          slack_title: 'Workflow Build Notification'
-          slack_text: 'Workflow *Build and Push Docker Image* has completed successfully.'
-      - name: Notify failure to Slack
-        if: ${{ needs.build_and_push.result != 'success' }}
+          status: ${{ needs.build_and_push.result }}
+          fields: job,event
+          status_color: ${{ job.status }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Workflow *${{ github.event.workflow.name }}* has *${{ needs.build_and_push.result }}*."}' $SLACK_WEBHOOK_URL
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: 'git'
+          SLACK_USERNAME: 'GitHub Actions'
+          SLACK_ICON_EMOJI: ':github:'
