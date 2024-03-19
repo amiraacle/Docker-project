@@ -25,10 +25,10 @@ jobs:
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY_URL/docker-project
       
       - name: Build Docker image
-        run: docker build -t exercise-app:latest .
+        run: docker build -t new-app:latest .
 
       - name: Tag Docker image
-        run: docker tag excercise-app:latest $ECR_REGISTRY_URL/excercise-app:0.0.2
+        run: docker tag new-app:latest $ECR_REGISTRY_URL/new-app:0.0.2
 
       - name: Push Docker image to ECR
-        run: docker push $ECR_REGISTRY_URL/excercise-app:0.0.2
+        run: docker push $ECR_REGISTRY_URL/new-app:0.0.2
