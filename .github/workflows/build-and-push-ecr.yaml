@@ -28,7 +28,7 @@ jobs:
         run: docker build -t exercise-app .
 
       - name: Tag Docker image
-        run: docker tag excercise-app:latest $ECR_REGISTRY_URL/excercise-app:0.0.2
+        run: docker tag excercise-app:latest $ECR_REGISTRY_URL/excercise-app:latest
 
       - name: Push Docker image to ECR
-        run: docker push $ECR_REGISTRY_URL/excercise-app:0.0.2
+        run: docker push $ECR_REGISTRY_URL/excercise-app:latest
