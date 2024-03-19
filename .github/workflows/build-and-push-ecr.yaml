@@ -1,7 +1,10 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image with Slack Notification
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
 
 jobs:
   build_and_push:
@@ -32,3 +35,15 @@ jobs:
 
       - name: Push Docker image to ECR
         run: docker push $ECR_REGISTRY_URL/docker-project:0.0.2
+
+  notify:
+    name: Notify Slack
+    needs: [build_and_push]
+    runs-on: ubuntu-latest
+    if: ${{ needs.build_and_push.result != 'success' }}
+    steps:
+      - name: Notify failure to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Workflow *${{ github.event.workflow.name }}* has *${{ needs.build_and_push.result }}*."}' $SLACK_WEBHOOK_URL
